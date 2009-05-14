@@ -32,18 +32,15 @@ class bucket_Scope {
   function set($classname, $instance) {
     return $this->instances[$classname] = $instance;
   }
-  function hasImplementation($interface) {
-    return isset($this->implementations[$interface]) || ($this->top && $this->top->hasImplementation($interface));
-  }
   function getImplementation($interface) {
     return isset($this->implementations[$interface])
       ? $this->implementations[$interface]
       : ($this->top
          ? $this->top->getImplementation($interface)
-         : null);
+         : $interface);
   }
   function setImplementation($interface, $use_class) {
-    $this->implementations[$interface] = $use_class;
+    $this->implementations[$interface] = strtolower($use_class);
   }
 }
 
@@ -84,6 +81,7 @@ class bucket_Container {
    * Creates a new (transient) instance of a class.
    */
   function create($classname) {
+    $classname = $this->scope->getImplementation($classname);
     if (isset($this->factory->{'new_' . strtolower($classname)})) {
       return call_user_func($this->factory->{'new_'.$classname}, $this);
     }
@@ -108,11 +106,11 @@ class bucket_Container {
     $classname = $classname ? strtolower($classname) : strtolower(get_class($instance));
     $this->scope->set($classname, $instance);
   }
-  function getImplementationFor($classname) {
+  protected function createThroughReflection($classname) {
     $classname = strtolower($classname);
-    if (!$this->scope->hasImplementation($classname)) {
+    $klass = new ReflectionClass($classname);
+    if ($klass->isInterface() || $klass->isAbstract()) { // TODO: is this redundant?
       $candidates = array();
-      $klass = new ReflectionClass($classname);
       foreach (get_declared_classes() as $klassname) {
         $candidate_klass = new ReflectionClass($klassname);
         if (!$candidate_klass->isInterface() && !$candidate_klass->isAbstract()) {
@@ -124,14 +122,6 @@ class bucket_Container {
         }
       }
       throw new bucket_CreationException("No implementation registered for '$classname'. Possible candidates are: ". implode(', ', $candidates));
-    }
-    return $this->scope->getImplementation($classname);
-  }
-  protected function createThroughReflection($classname) {
-    $classname = strtolower($classname);
-    $klass = new ReflectionClass($classname);
-    if ($klass->isInterface() || $klass->isAbstract()) { // TODO: is this redundant?
-      return $this->create($this->getImplementationFor($klass->getName()));
     }
     $dependencies = array();
     $ctor = $klass->getConstructor();

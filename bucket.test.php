@@ -8,6 +8,7 @@ if (realpath($_SERVER['PHP_SELF']) == __FILE__) {
 require_once 'lib/bucket.inc.php';
 
 class NoDependencies {}
+class ExtendsNoDependencies extends NoDependencies {}
 
 class SingleClassDependency {
   public $val;
@@ -97,6 +98,13 @@ class TestOfBucketResolving extends UnitTestCase {
     $o = $bucket->create('DependsOnInterface');
     $this->assertIsA($o, 'DependsOnInterface');
     $this->assertIsA($o->val, 'ConcreteImplementation');
+  }
+  function test_can_set_different_implementation_for_concrete_class() {
+    $bucket = new bucket_Container();
+    $bucket->registerImplementation('NoDependencies', 'ExtendsNoDependencies');
+    $o = $bucket->create('SingleClassDependency');
+    $this->assertIsA($o, 'SingleClassDependency');
+    $this->assertIsA($o->val, 'ExtendsNoDependencies');
   }
 }
 
