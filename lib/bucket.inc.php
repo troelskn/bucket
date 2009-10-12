@@ -108,6 +108,7 @@ class bucket_Container {
   }
   protected function createThroughReflection($classname) {
     $classname = strtolower($classname);
+    spl_autoload_call($classname);
     $klass = new ReflectionClass($classname);
     if ($klass->isInterface() || $klass->isAbstract()) { // TODO: is this redundant?
       $candidates = array();

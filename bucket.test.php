@@ -54,6 +54,45 @@ class TestFactory {
   }
 }
 
+class RequireUndefinedClass {
+  function __construct(ClassThatDoesntExist $autoloaded) {}
+}
+
+class TriedToAutoloadException extends Exception {}
+
+function test_autoload_fail() {
+  throw new TriedToAutoloadException();
+}
+
+class TestOfBucketAutoload extends UnitTestCase {
+  function setUp() {
+    $this->spl_autoload_functions = spl_autoload_functions();
+    if ($this->spl_autoload_functions) {
+      foreach ($this->spl_autoload_functions as $fn) {
+        spl_autoload_unregister($fn);
+      }
+    }
+  }
+  function tearDown() {
+    if (spl_autoload_functions()) {
+      foreach (spl_autoload_functions() as $fn) {
+        spl_autoload_unregister($fn);
+      }
+    }
+    if ($this->spl_autoload_functions) {
+      foreach ($this->spl_autoload_functions as $fn) {
+        spl_autoload_register($fn);
+      }
+    }
+  }
+  function test_undefined_class_triggers_autoload() {
+    spl_autoload_register('test_autoload_fail');
+    $bucket = new bucket_Container();
+    $this->expectException('TriedToAutoloadException');
+    $bucket->create('RequireUndefinedClass');
+  }
+}
+
 class TestOfBucketResolving extends UnitTestCase {
   function test_can_create_empty_container() {
     $bucket = new bucket_Container();
