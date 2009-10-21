@@ -58,10 +58,16 @@ class RequireUndefinedClass {
   function __construct(ClassThatDoesntExist $autoloaded) {}
 }
 
-class TriedToAutoloadException extends Exception {}
+class TriedToAutoloadException extends Exception {
+  public $classname;
+  function __construct($classname) {
+    $this->classname = $classname;
+    parent::__construct();
+  }
+}
 
-function test_autoload_fail() {
-  throw new TriedToAutoloadException();
+function test_autoload_fail($classname) {
+  throw new TriedToAutoloadException($classname);
 }
 
 class TestOfBucketAutoload extends UnitTestCase {
@@ -90,6 +96,16 @@ class TestOfBucketAutoload extends UnitTestCase {
     $bucket = new bucket_Container();
     $this->expectException('TriedToAutoloadException');
     $bucket->create('RequireUndefinedClass');
+  }
+  function test_autoload_gets_canonical_classname() {
+    spl_autoload_register('test_autoload_fail');
+    $bucket = new bucket_Container();
+    try {
+      $bucket->create('RequireUndefinedClass');
+      $this->fail("Expected TriedToAutoloadException");
+    } catch (TriedToAutoloadException $ex) {
+      $this->assertEqual($ex->classname, 'RequireUndefinedClass');
+    }
   }
 }
 

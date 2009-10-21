@@ -107,8 +107,8 @@ class bucket_Container {
     $this->scope->set($classname, $instance);
   }
   protected function createThroughReflection($classname) {
-    $classname = strtolower($classname);
     spl_autoload_call($classname);
+    $classname = strtolower($classname);
     $klass = new ReflectionClass($classname);
     if ($klass->isInterface() || $klass->isAbstract()) { // TODO: is this redundant?
       $candidates = array();
