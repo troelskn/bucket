@@ -33,8 +33,9 @@ class bucket_Scope {
     return $this->instances[$classname] = $instance;
   }
   function getImplementation($interface) {
-    return isset($this->implementations[$interface])
-      ? $this->implementations[$interface]
+    $index = strtolower($interface);
+    return isset($this->implementations[$index])
+      ? $this->implementations[$index]
       : ($this->top
          ? $this->top->getImplementation($interface)
          : $interface);
