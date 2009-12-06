@@ -41,7 +41,7 @@ class bucket_Scope {
          : $interface);
   }
   function setImplementation($interface, $use_class) {
-    $this->implementations[$interface] = strtolower($use_class);
+    $this->implementations[$interface] = $use_class;
   }
 }
 
@@ -72,7 +72,7 @@ class bucket_Container {
    * Gets a shared instance of a class.
    */
   function get($classname) {
-    $classname = strtolower($classname);
+    $classname = $this->scope->getImplementation($classname);
     if (!$this->scope->has($classname)) {
       $this->scope->set($classname, $this->create($classname));
     }
