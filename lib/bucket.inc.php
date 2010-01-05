@@ -108,7 +108,9 @@ class bucket_Container {
     $this->scope->set($classname, $instance);
   }
   protected function createThroughReflection($classname) {
-    spl_autoload_call($classname);
+    if (!class_exists($classname)) {
+      throw new Exception("Undefined class $classname");
+    }
     $classname = strtolower($classname);
     $klass = new ReflectionClass($classname);
     if ($klass->isInterface() || $klass->isAbstract()) { // TODO: is this redundant?
