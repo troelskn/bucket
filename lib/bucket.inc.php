@@ -109,7 +109,7 @@ class bucket_Container {
   }
   protected function createThroughReflection($classname) {
     if (!class_exists($classname)) {
-      throw new Exception("Undefined class $classname");
+      throw new bucket_CreationException("Undefined class $classname");
     }
     $classname = strtolower($classname);
     $klass = new ReflectionClass($classname);
