@@ -271,4 +271,10 @@ class TestOfBucketScope extends UnitTestCase {
     $o = $scope->get('NoDependencies');
     $this->assertFalse($o === $bucket->get('NoDependencies'));
   }
+  function test_setting_an_instance_and_getting_it_should_return_same_instance() {
+    $bucket = new bucket_Container();
+    $obj = new StdClass();
+    $bucket->set($obj);
+    $this->assertSame($bucket->get('StdClass'), $obj);
+  }
 }

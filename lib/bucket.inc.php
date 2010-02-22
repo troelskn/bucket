@@ -73,10 +73,11 @@ class bucket_Container {
    */
   function get($classname) {
     $classname = $this->scope->getImplementation($classname);
-    if (!$this->scope->has($classname)) {
-      $this->scope->set($classname, $this->create($classname));
+    $name = strtolower($classname);
+    if (!$this->scope->has($name)) {
+      $this->scope->set($name, $this->create($classname));
     }
-    return $this->scope->get($classname);
+    return $this->scope->get($name);
   }
   /**
    * Creates a new (transient) instance of a class.
@@ -104,8 +105,8 @@ class bucket_Container {
     if (!is_object($instance)) {
       throw new Exception("First argument must be an object");
     }
-    $classname = $classname ? strtolower($classname) : strtolower(get_class($instance));
-    $this->scope->set($classname, $instance);
+    $name = strtolower($classname ? $classname : get_class($instance));
+    $this->scope->set($name, $instance);
   }
   protected function createThroughReflection($classname) {
     if (!class_exists($classname)) {
