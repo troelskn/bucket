@@ -104,7 +104,7 @@ class TestOfBucketAutoload extends UnitTestCase {
       $bucket->create('RequireUndefinedClass');
       $this->fail("Expected TriedToAutoloadException");
     } catch (TriedToAutoloadException $ex) {
-      $this->assertEqual($ex->classname, 'RequireUndefinedClass');
+      $this->assertEqual($ex->classname, 'ClassThatDoesntExist');
     }
   }
 }
