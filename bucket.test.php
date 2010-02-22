@@ -70,6 +70,14 @@ function test_autoload_fail($classname) {
   throw new TriedToAutoloadException($classname);
 }
 
+class TestUnderscoreCallFactory {
+  public $invoked = false;
+  function __call($name, $args) {
+    $this->invoked = true;
+    return new StdClass();
+  }
+}
+
 class TestOfBucketAutoload extends UnitTestCase {
   function setUp() {
     $this->spl_autoload_functions = spl_autoload_functions();
@@ -222,6 +230,12 @@ class TestOfBucketFactory extends UnitTestCase {
     //   )
     // );
     $this->assertIsA($bucket->get('DefaultValue'), 'StdClass');
+  }
+  function test_underscore_call_is_callable() {
+    $factory = new TestUnderscoreCallFactory();
+    $bucket = new bucket_Container($factory);
+    $this->assertIsA($bucket->get('StdClass'), 'StdClass');
+    $this->assertTrue($factory->invoked);
   }
 }
 

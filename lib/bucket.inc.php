@@ -86,7 +86,7 @@ class bucket_Container {
     if (isset($this->factory->{'new_' . strtolower($classname)})) {
       return call_user_func($this->factory->{'new_'.strtolower($classname)}, $this);
     }
-    if (method_exists($this->factory, 'new_' . $classname)) {
+    if (is_callable(array($this->factory, 'new_' . $classname))) {
       return $this->factory->{'new_'.$classname}($this);
     }
     return $this->createThroughReflection($classname);
