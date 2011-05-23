@@ -85,10 +85,20 @@ class bucket_Container {
   function create($classname) {
     $classname = $this->scope->getImplementation($classname);
     if (isset($this->factory->{'new_' . strtolower($classname)})) {
-      return call_user_func($this->factory->{'new_'.strtolower($classname)}, $this);
+        $obj = call_user_func($this->factory->{'new_'.strtolower($classname)}, $this);
+	    if(!$obj){
+		    throw new bucket_CreationException(
+			    "Factory function new_".strtolower($classname) . " did not return an object");
+	    }
+	    return $obj;
     }
     if (is_callable(array($this->factory, 'new_' . $classname))) {
-      return $this->factory->{'new_'.$classname}($this);
+        $obj = $this->factory->{'new_'.$classname}($this);
+	    if(!$obj){
+		    throw new bucket_CreationException(
+			    "Factory method new_".strtolower($classname) . " did not return an object");
+	    }
+	    return $obj;
     }
     return $this->createThroughReflection($classname);
   }
