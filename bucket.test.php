@@ -1,8 +1,8 @@
 <?php
-require_once 'simpletest/unit_tester.php';
+require_once 'vendor/simpletest/simpletest/unit_tester.php';
 if (realpath($_SERVER['PHP_SELF']) == __FILE__) {
   error_reporting(E_ALL | E_STRICT);
-  require_once 'simpletest/autorun.php';
+  require_once 'vendor/simpletest/simpletest/autorun.php';
 }
 
 require_once 'lib/bucket.inc.php';

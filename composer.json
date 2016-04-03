@@ -1,0 +1,30 @@
+{
+    "name": "troelskn/bucket",
+    "type": "library",
+    "description": "Bucket is a very minimal, yet useful di-container for PHP.",
+    "keywords": [
+        "di-container",
+        "dependency injection"
+    ],
+    "homepage": "https://github.com/troelskn/bucket",
+    "license": "BSD-4-Clause",
+    "authors": [
+        {
+            "name": "Troels Knak-Nielsen",
+            "email": "troelskn@gmail.com",
+            "homepage": "http://troelskn.com/",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.0.0"
+    },
+    "autoload": {
+        "files": [
+            "lib/bucket.inc.php"
+        ]
+    },
+    "require-dev": {
+        "simpletest/simpletest": ">=1.1"
+    }
+}
