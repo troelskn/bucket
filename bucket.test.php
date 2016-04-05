@@ -66,54 +66,11 @@ class TriedToAutoloadException extends Exception {
   }
 }
 
-function test_autoload_fail($classname) {
-  throw new TriedToAutoloadException($classname);
-}
-
 class TestUnderscoreCallFactory {
   public $invoked = false;
   function __call($name, $args) {
     $this->invoked = true;
     return new StdClass();
-  }
-}
-
-class TestOfBucketAutoload extends UnitTestCase {
-  function setUp() {
-    $this->spl_autoload_functions = spl_autoload_functions();
-    if ($this->spl_autoload_functions) {
-      foreach ($this->spl_autoload_functions as $fn) {
-        spl_autoload_unregister($fn);
-      }
-    }
-  }
-  function tearDown() {
-    if (spl_autoload_functions()) {
-      foreach (spl_autoload_functions() as $fn) {
-        spl_autoload_unregister($fn);
-      }
-    }
-    if ($this->spl_autoload_functions) {
-      foreach ($this->spl_autoload_functions as $fn) {
-        spl_autoload_register($fn);
-      }
-    }
-  }
-  function test_undefined_class_triggers_autoload() {
-    spl_autoload_register('test_autoload_fail');
-    $bucket = new bucket_Container();
-    $this->expectException('TriedToAutoloadException');
-    $bucket->create('RequireUndefinedClass');
-  }
-  function test_autoload_gets_canonical_classname() {
-    spl_autoload_register('test_autoload_fail');
-    $bucket = new bucket_Container();
-    try {
-      $bucket->create('RequireUndefinedClass');
-      $this->fail("Expected TriedToAutoloadException");
-    } catch (TriedToAutoloadException $ex) {
-      $this->assertEqual($ex->classname, 'ClassThatDoesntExist');
-    }
   }
 }
 
